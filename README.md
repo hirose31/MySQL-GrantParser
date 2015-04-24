@@ -5,16 +5,88 @@
 
 # NAME
 
-MySQL::GrantParser - fixme
+MySQL::GrantParser - parse SHOW GRANTS and return as hash reference
 
 # SYNOPSIS
 
     use MySQL::GrantParser;
-    fixme
+    
+    # connect with existing dbh
+    my $dbh = DBI->connect(...);
+    my $grant_parser = MySQL::GrantParser->new(
+        dbh => $dbh;
+    );
+    
+    # connect with user, password
+    my $grant_parser = MySQL::GrantParser->new(
+        user     => 'root',
+        password => 'toor',
+        hostname => '127.0.0.1',
+    );
+    
+    # and parse!
+    my $grants = $grant_parser->parse; # => HashRef
 
 # DESCRIPTION
 
-MySQL::GrantParser is fixme
+MySQL::GrantParser is SHOW GRANTS parser for MySQL, inspired by Ruby's [Gratan](http://gratan.codenize.tools/).
+
+This module returns privileges for all users as following hash reference.
+
+    {
+        'USER@HOST' => {
+            'user' => USER,
+            'host' => HOST,
+            'objects' => {
+                'DB_NAME.TABLE_NAME' => {
+                    privs => [ PRIV_TYPE, PRIV_TYPE, ... ],
+                    with  => 'GRANT OPTION',
+                },
+                ...
+            },
+            'options' => {
+                'identified' => '...',
+                'required'   => '...',
+            },
+        },
+        {
+            ...
+        },
+    }
+
+For example, this GRANT statement
+
+    GRANT SELECT, INSERT, UPDATE, DELETE ON orcl.* TO 'scott'@'%' IDENTIFIED BY 'tiger' WITH GRANT OPTION;
+
+is represented as following.
+
+    {
+        'scott@%' => {
+            user => 'scott',
+            host => '%',
+            objects => {
+                '*.*' => {
+                    privs => [
+                        'USAGE'
+                    ],
+                    with => '',
+                },
+                '`orcl`.*' => {
+                    privs => [
+                        'SELECT',
+                        'INSERT',
+                        'UPDATE',
+                        'DELETE',
+                    ],
+                    with => 'GRANT OPTION',
+                }
+            },
+            options => {
+                identified => "PASSWORD XXX",
+                required => '',
+            },
+        },
+    }
 
 # METHODS
 
@@ -22,27 +94,28 @@ MySQL::GrantParser is fixme
 
 ### **new**(%args:Hash) :MySQL::GrantParser
 
-Creates and returns a new InfluxDB client instance. Dies on errors.
+Creates and returns a new MySQL::GrantParser instance. Dies on errors.
 
 %args is following:
 
-- hostname => Str ("127.0.0.1")
+- dbh => DBI:db
+
+    Database handle object.
+
+- user => Str
+- password => Str
+- hostname => Str
+- socket => Str
+
+    Path of UNIX domain socket for connecting.
+
+Mandatory arguments are `dbh` or `hostname` or `socket`.
 
 ## Instance Methods
 
-### **method\_name**($message:Str) :Bool
+### **parse**() :HashRef
 
-# ENVIRONMENT VARIABLES
-
-- HOME
-
-    Used to determine the user's home directory.
-
-# FILES
-
-- `/path/to/config.ph`
-
-    設定ファイル。
+Parse privileges and return as hash reference.
 
 # AUTHOR
 
@@ -58,8 +131,8 @@ patches and collaborators are welcome.
 
 # SEE ALSO
 
-[Module::Hoge](https://metacpan.org/pod/Module::Hoge),
-ls(1), cd(1)
+[Gratan](http://gratan.codenize.tools/),
+[http://dev.mysql.com/doc/refman/5.6/en/grant.html](http://dev.mysql.com/doc/refman/5.6/en/grant.html)
 
 # COPYRIGHT
 

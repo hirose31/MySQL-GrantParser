@@ -1,5 +1,5 @@
 {
-   "abstract" : "fixme",
+   "abstract" : "parse SHOW GRANTS and return as hash reference",
    "author" : [
       "HIROSE Masaaki <hirose31@gmail.com>"
    ],
@@ -51,6 +51,17 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.001"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/hirose31/MySQL-GrantParser/issues"
+      },
+      "homepage" : "https://github.com/hirose31/MySQL-GrantParser",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/hirose31/MySQL-GrantParser.git",
+         "web" : "https://github.com/hirose31/MySQL-GrantParser"
+      }
+   },
+   "version" : "1.001"
 }
 
