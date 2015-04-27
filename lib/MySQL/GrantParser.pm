@@ -61,8 +61,11 @@ sub parse {
         my ($user, $host) = @{$user_host};
         my $quoted_user_host = $self->quote_user($user, $host);
         my $rset = $self->{dbh}->selectall_arrayref("SHOW GRANTS FOR ${quoted_user_host}");
-        my $stmts = $rset->[0];
-        %grants = (%grants, %{ parse_stmts($stmts) });
+        my @stmts;
+        for my $rs (@$rset) {
+            push @stmts, @{$rs};
+        }
+        %grants = (%grants, %{ parse_stmts(\@stmts) });
     }
 
     return \%grants;
