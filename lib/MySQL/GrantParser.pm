@@ -9,19 +9,6 @@ our $VERSION = '1.001';
 use DBI;
 use Carp;
 
-use Data::Dumper;
-$Data::Dumper::Indent    = 1;
-$Data::Dumper::Deepcopy  = 1;
-$Data::Dumper::Sortkeys  = 1;
-$Data::Dumper::Terse     = 1;
-$Data::Dumper::Useqq     = 1;
-$Data::Dumper::Quotekeys = 0;
-sub p(@) { ## no critic
-    my $d =  Dumper(\@_);
-    $d =~ s/\\x{([0-9a-z]+)}/chr(hex($1))/ge;
-    print $d;
-}
-
 sub new {
     my($class, %args) = @_;
 
