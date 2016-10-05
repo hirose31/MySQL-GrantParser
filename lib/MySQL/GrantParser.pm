@@ -47,6 +47,8 @@ sub new {
         ) or Carp::croak("$DBI::errstr ($DBI::err)");
     }
 
+    $self->{server_version} =  exists $self->{dbh}->{mysql_serverversion} ? $self->{dbh}->{mysql_serverversion} : 0;
+
     return bless $self, $class;
 }
 
@@ -65,6 +67,15 @@ sub parse {
         for my $rs (@$rset) {
             push @stmts, @{$rs};
         }
+        if ($self->{server_version} >= 50706) {
+            # As of MySQL 5.7.6, SHOW GRANTS output does not include IDENTIFIED BY PASSWORD clauses. Use the SHOW CREATE USER statement instead.
+            # https://dev.mysql.com/doc/refman/5.7/en/show-grants.html
+            my $rset = $self->{dbh}->selectall_arrayref("SHOW CREATE USER ${quoted_user_host}");
+            for my $rs (@$rset) {
+                push @stmts, @{$rs};
+            }
+        }
+
         %grants = (%grants, %{ parse_stmts(\@stmts) });
     }
 
@@ -84,6 +95,15 @@ sub parse_stmts {
             user       => '',
             host       => '',
         };
+
+        if ($stmt =~ s/\s+IDENTIFIED WITH\s+'([^']+)'\s+AS\s+(.+?)\s+//) {
+            # my $auth_plugin = $1; # eg: mysql_native_password
+            $parsed->{identified} = "PASSWORD $2";
+        }
+        if ($stmt =~ /\ACREATE\s+USER\s+'(.*)'\@'(.+)'/) {
+            $parsed->{user}   = $1;
+            $parsed->{host}   = $2;
+        }
 
         if ($stmt =~ s/\s+WITH\s+(.+?)\z//) {
             $parsed->{with} = $1;
@@ -130,7 +150,7 @@ sub pack_grants {
                 },
             };
         }
-        $packed->{$user_host}{objects}{$object}  = $grant;
+        $packed->{$user_host}{objects}{$object}  = $grant if (scalar(@{ $grant->{privs} || []}) > 0);
         $packed->{$user_host}{options}{required} = $required if $required;
 
         if ($identified) {
