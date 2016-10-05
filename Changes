@@ -1,6 +1,8 @@
 Revision history for MySQL-GrantParser
 
 {{$NEXT}}
+    [IMPROVEMENTS]
+        - Support MySQL 5.7
 
 1.001     2015-04-27 11:05:47+00:00 UTC
     [NEW FEATURES]
