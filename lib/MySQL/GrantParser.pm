@@ -100,6 +100,10 @@ sub parse_stmts {
             # my $auth_plugin = $1; # eg: mysql_native_password
             $parsed->{identified} = "PASSWORD $2";
         }
+        if ($stmt =~ s/\s+IDENTIFIED WITH\s+'([^']+)'\s+//) {
+            # no AS
+            $parsed->{identified} = "";
+        }
         if ($stmt =~ /\ACREATE\s+USER\s+'(.*)'\@'(.+)'/) {
             $parsed->{user}   = $1;
             $parsed->{host}   = $2;
