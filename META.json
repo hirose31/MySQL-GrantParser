@@ -4,7 +4,7 @@
       "HIROSE Masaaki <hirose31@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.035, Dist::Milla version v1.0.15, CPAN::Meta::Converter version 2.143240",
+   "generated_by" : "Dist::Milla version v1.0.15, Dist::Zilla version 6.008, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -15,12 +15,12 @@
    "name" : "MySQL-GrantParser",
    "no_index" : {
       "directory" : [
-         "t",
-         "xt",
+         "eg",
+         "examples",
          "inc",
          "share",
-         "eg",
-         "examples"
+         "t",
+         "xt"
       ]
    },
    "prereqs" : {
@@ -73,6 +73,7 @@
          "web" : "https://github.com/hirose31/MySQL-GrantParser"
       }
    },
-   "version" : "1.003"
+   "version" : "1.003",
+   "x_serialization_backend" : "JSON::XS version 3.02"
 }
 
