@@ -1,6 +1,8 @@
 Revision history for MySQL-GrantParser
 
 {{$NEXT}}
+
+1.005     2023-05-24 10:28:58+00:00 UTC
     [BUG FIXES]
         - Pack grants carefully in case of existing same objects
 
