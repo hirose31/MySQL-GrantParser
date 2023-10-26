@@ -1,6 +1,8 @@
 Revision history for MySQL-GrantParser
 
 {{$NEXT}}
+    [BUG FIXES]
+        - Avoided duplication of the same WITH clause
 
 1.005     2023-05-24 10:28:58+00:00 UTC
     [BUG FIXES]
